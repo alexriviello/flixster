@@ -19,6 +19,8 @@ import com.example.flixster.models.Movie;
 
 import java.util.List;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     Context context;
@@ -78,7 +80,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             // else show poster image
                 imageUrl = movie.getPosterPath();
             }
-            Glide.with(context).load(imageUrl).into(ivPoster);
+            Glide.with(context)
+                    .load(imageUrl)
+                  // used thumbnail as a placeholder workaround for known Glide bug
+                    .thumbnail(Glide.with(context).load(R.drawable.placeholder_image))
+                    .transition(withCrossFade())
+                    .error(R.drawable.error_image)
+                    .dontAnimate()
+                    .into(ivPoster);
         }
     }
 }
