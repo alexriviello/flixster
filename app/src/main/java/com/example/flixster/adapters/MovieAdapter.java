@@ -1,6 +1,7 @@
 package com.example.flixster.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.text.Layout;
 import android.util.Log;
@@ -8,14 +9,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.flixster.DetailActivity;
 import com.example.flixster.R;
 import com.example.flixster.models.Movie;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -58,6 +64,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
+        RelativeLayout container;
+
         TextView tvTitle;
         TextView tvOverview;
         ImageView ivPoster;
@@ -67,9 +75,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvOverview = itemView.findViewById(R.id.tvOverview);
             ivPoster = itemView.findViewById(R.id.ivPoster);
+            container = itemView.findViewById(R.id.container);
         }
 
-        public void bind(Movie movie) {
+        public void bind(final Movie movie) {
             tvTitle.setText(movie.getTitle());
             tvOverview.setText(movie.getOverview());
             String imageUrl;
@@ -88,6 +97,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
                     .error(R.drawable.error_image)
                     .dontAnimate()
                     .into(ivPoster);
+
+            // set a click listener that notes when a user clicks on anywhere in the movie "container"
+            container.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    // navigate to a new activity when clicked
+                    Intent i = new Intent(context, DetailActivity.class);
+                    // wrap up movie class in parcel to send to new activity
+                    i.putExtra("movie", Parcels.wrap(movie));
+                    // actually start the activity
+                    context.startActivity(i);
+                }
+            });
+
+
+
         }
     }
 }
